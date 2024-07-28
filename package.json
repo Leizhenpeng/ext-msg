@@ -1,19 +1,35 @@
 {
-  "name": "bg-alive",
+  "name": "ext-message",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "packageManager": "pnpm@9.1.1",
-  "description": "🔄 Keep your background scripts running reliably in MV3 extensions.",
+  "description": "🔗 Simplified, type-safe wrapper for web extension messaging, ensuring seamless communication across different contexts.",
   "author": "leizhenpeng <laolei@forkway.cn>",
   "license": "MIT",
   "funding": "https://github.com/sponsors/leizhenpeng",
-  "homepage": "https://github.com/leizhenpeng/bg-alive#readme",
+  "homepage": "https://github.com/leizhenpeng/ext-message#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/leizhenpeng/bg-alive.git"
+    "url": "git+https://github.com/leizhenpeng/ext-message.git"
   },
-  "bugs": "https://github.com/leizhenpeng/bg-alive/issues",
-  "keywords": [],
+  "bugs": "https://github.com/leizhenpeng/ext-message/issues",
+  "keywords": [
+    "web",
+    "extension",
+    "messaging",
+    "API",
+    "type-safe",
+    "wrapper",
+    "communication",
+    "scripts",
+    "pages",
+    "cross-context",
+    "transport",
+    "layer",
+    "unified",
+    "secure",
+    "reliable"
+  ],
   "sideEffects": false,
   "exports": {
     ".": {
