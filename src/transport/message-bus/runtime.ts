@@ -49,7 +49,7 @@ class MessageRuntimeClass implements MessageRuntime {
       this.openTransactions.delete(transactionId)
     }
     else {
-      this.routeMessageIfNeeded(message)
+      this.firstRoute(message)
     }
   }
 
@@ -69,7 +69,7 @@ class MessageRuntimeClass implements MessageRuntime {
         }) as JsonValue
       }
       else {
-        this.routeMessageIfNeeded(message)
+        this.firstRoute(message)
         noHandlerFoundError = true
         throw new Error(`[ext-message] No handler registered in '${this.thisContext}' to accept messages with id '${message.id}'`)
       }
@@ -96,8 +96,8 @@ class MessageRuntimeClass implements MessageRuntime {
     }
   }
 
-  // 检查并路由消息，如果需要
-  private routeMessageIfNeeded = (message: InternalMessage) => {
+  // 第一次处理消息，没有找到，路由出去
+  private firstRoute = (message: InternalMessage) => {
     if (!message.hops.includes(`${this.thisContext}::${this.runtimeId}`)) {
       this.addHop(message)
       this.routeMessage(message)
@@ -114,6 +114,8 @@ class MessageRuntimeClass implements MessageRuntime {
 
   // 处理接收到的消息
   public handleMessage = (message: InternalMessage) => {
+    console.log('context', this.thisContext)
+    console.log('message', JSON.stringify(message, null, 2))
     if (message.destination.context === this.thisContext && !message.destination.frameId && !message.destination.tabId) {
       this.localMessage?.(message)
 
@@ -127,7 +129,8 @@ class MessageRuntimeClass implements MessageRuntime {
       }
     }
     else {
-      this.routeMessageIfNeeded(message)
+      this.addHop(message)
+      this.routeMessage(message)
     }
   }
 

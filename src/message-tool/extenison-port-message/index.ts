@@ -1,9 +1,9 @@
 import type { Runtime } from 'webextension-polyfill'
 import browser from 'webextension-polyfill'
-import type { InternalPacket } from '../types'
-import { type DeliveryReceipt, createDeliveryLogger } from '../utils/delivery-logger'
-import { type UID, createUID } from '../utils/gen-uid'
-import { encodeConnectionArgs } from '../utils/connection-args'
+import type { InternalPacket } from '../../types'
+import { type DeliveryReceipt, createDeliveryLogger } from '../../utils/delivery-logger'
+import { type UID, createUID } from '../../utils/gen-uid'
+import { encodeConnectionArgs } from '../../utils/connection-args'
 
 // 消息类型定义
 export type StatusMessage =

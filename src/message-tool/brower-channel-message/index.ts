@@ -1,4 +1,4 @@
-import type { EndpointWontRespondError, InternalPacket } from '../types'
+import type { EndpointWontRespondError, InternalPacket } from '../../types'
 import { getMessagePort, getMessagePorts } from './message-port'
 
 /**

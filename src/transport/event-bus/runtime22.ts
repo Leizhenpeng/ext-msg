@@ -3,7 +3,7 @@ import type { JsonValue } from 'type-fest'
 import { serializeError } from 'serialize-error'
 import uuid from 'tiny-uid'
 import { i } from 'vitest/dist/reporters-yx5ZTtEV.js'
-import type { InternalBroadcastEvent, PegasusMessage, RuntimeContext } from '../../types'
+import type { InternalBroadcastEvent, Message, RuntimeContext } from '../../types'
 import type { TransportBroadcastEventAPI } from '../core'
 
 // us - cs- bg -cs -us1/2/3
@@ -18,7 +18,7 @@ export function createBroadcastEventRuntime(thisContext: RuntimeContext, routeEv
   const runtimeId = uuid()
   const onEventListeners = new Map<
         string,
-        Array<(event: PegasusMessage<JsonValue>) => void | Promise<void>>
+        Array<(event: Message<JsonValue>) => void | Promise<void>>
     >()
 
   // 一会 data 一会 receive
@@ -51,7 +51,7 @@ export function createBroadcastEventRuntime(thisContext: RuntimeContext, routeEv
             id: eventID,
             sender: event.origin,
             timestamp: event.timestamp,
-          } as PegasusMessage<JsonValue>)
+          } as Message<JsonValue>)
         }
         catch (error) {
           errs.push(error)
@@ -106,7 +106,7 @@ export function createBroadcastEventRuntime(thisContext: RuntimeContext, routeEv
       const currentListeners = onEventListeners.get(eventID) ?? []
       onEventListeners.set(eventID, [
         ...currentListeners,
-        callback as (event: PegasusMessage<JsonValue>) => void,
+        callback as (event: Message<JsonValue>) => void,
       ])
 
       return () => {

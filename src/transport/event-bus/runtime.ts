@@ -1,7 +1,7 @@
 import type { JsonValue } from 'type-fest'
 import { serializeError } from 'serialize-error'
 import uuid from 'tiny-uid'
-import type { InternalBroadcastEvent, PegasusMessage, RuntimeContext } from '../../types'
+import type { InternalBroadcastEvent, Message, RuntimeContext } from '../../types'
 import type { TransportBroadcastEventAPI } from '../core'
 
 export interface BroadcastEventRuntime extends TransportBroadcastEventAPI {
@@ -10,7 +10,7 @@ export interface BroadcastEventRuntime extends TransportBroadcastEventAPI {
 
 class BroadcastEventRuntimeImpl implements BroadcastEventRuntime {
   private runtimeId: string
-  private onEventListeners: Map<string, Array<(event: PegasusMessage<JsonValue>) => void | Promise<void>>>
+  private onEventListeners: Map<string, Array<(event: Message<JsonValue>) => void | Promise<void>>>
   private thisContext: RuntimeContext
   private routeEvent: (event: InternalBroadcastEvent) => Promise<void>
   private localEvent?: (event: InternalBroadcastEvent) => Promise<void>
@@ -75,7 +75,7 @@ class BroadcastEventRuntimeImpl implements BroadcastEventRuntime {
           id: eventID,
           sender: event.origin,
           timestamp: event.timestamp,
-        } as PegasusMessage<JsonValue>)
+        } as Message<JsonValue>)
       }
       catch (error) {
         errors.push(error)
@@ -91,7 +91,7 @@ class BroadcastEventRuntimeImpl implements BroadcastEventRuntime {
     }
   }
 
-  public receive = (eventID: string, callback: (event: PegasusMessage<JsonValue>) => void): () => void => {
+  public receive = (eventID: string, callback: (event: Message<JsonValue>) => void): () => void => {
     const currentListeners = this.onEventListeners.get(eventID) ?? []
     this.onEventListeners.set(eventID, [...currentListeners, callback])
 
@@ -101,7 +101,7 @@ class BroadcastEventRuntimeImpl implements BroadcastEventRuntime {
     }
   }
 
-  public offBoardcastEvent = (eventID: string, callback: (event: PegasusMessage<JsonValue>) => void): void => {
+  public offBoardcastEvent = (eventID: string, callback: (event: Message<JsonValue>) => void): void => {
     const updatedListeners = (this.onEventListeners.get(eventID) ?? []).filter(listener => listener !== callback)
     this.onEventListeners.set(eventID, updatedListeners)
   }

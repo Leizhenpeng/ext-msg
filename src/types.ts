@@ -1,4 +1,4 @@
-import type { JsonValue } from 'type-fest'
+import type { JsonValue, Promisable } from 'type-fest'
 
 /**
  * Call to ensure an active listener has been removed.
@@ -6,14 +6,14 @@ import type { JsonValue } from 'type-fest'
 export type RemoveListenerCallback = () => void
 
 /**
- * Either a Promise of a type, or that type directly. Used to indicate that a method can by sync or async.
+ * 获取函数的参数类型，如果是函数类型，返回参数类型的联合类型；如果不是函数类型，则返回原类型。
+ * type Example1 = ParamType<() => void>; // undefined
+ * type Example2 = ParamType<(arg: string) => void>; // string
+ * type Example3 = ParamType<(arg1: string, arg2: number) => void>; // string | number
+ * type Example4 = ParamType<string>; // string
+ * type Example5 = ParamType<{ name: string }>; // { name: string }
  */
-export type MaybePromise<T> = Promise<T> | T
-
-/**
- * Given a function declaration, `ProtocolWithReturn`, or a value, return the message's data type.
- */
-export type GetMessageProtocolDataType<T> = T extends (
+export type ParamType<T> = T extends (
   ...args: infer Args
 ) =>
 any
@@ -26,13 +26,13 @@ any
     : never
 
 /**
- * Given a function declaration, `ProtocolWithReturn`, or a value, return the message's return type.
+ * 获取函数的返回类型，如果不是函数，则返回原类型。
+ * type Example1 = ReturnType<() => number>; // number
+ * type Example2 = ReturnType<string>; // string
+ * type Example3 = ReturnType<(x: string) => boolean>; // boolean
+ * type Example4 = ReturnType<{ name: string }>; // { name: string }
  */
-export type GetMessageProtocolReturnType<T> = T extends (
-  ...args: any[]
-) => infer R
-  ? R
-  : void
+export type ReturnType<T> = T extends (...args: any[]) => infer R ? R : T
 
 /**
  * Promisify<T> returns Promise<T> if it is not a promise, otherwise it returns T.
@@ -55,19 +55,36 @@ export interface Endpoint {
 
 export type Destination = Endpoint | RuntimeContext | string
 
-export interface PegasusMessage<TData extends JsonValue> {
+export interface Message<TData extends JsonValue> {
   data: TData
   id: string
   timestamp: number
   sender: Endpoint
 }
 
-export type OnMessageCallback<
-    TProtocolMap extends Record<string, any> = Record<string, any>,
-    TType extends keyof TProtocolMap = never,
-> = (
-  message: PegasusMessage<GetMessageProtocolDataType<TProtocolMap[TType]>>,
-) => MaybePromise<GetMessageProtocolReturnType<TProtocolMap[TType]>>
+/**
+ * interface ProtocolMap {
+ *   foo: (arg: string) => number;
+ *   bar: (arg: number) => Promise<boolean>;
+ * }
+ * const onFooMessage: OnMessageCallback<ProtocolMap, 'foo'> = async (message) => {
+ *   // message.data 的类型是 string
+ *   console.log(message.data); // 打印消息数据
+ *   // 返回类型是 number
+ *   return message.data.length;
+ * };
+ *
+ * const onBarMessage: OnMessageCallback<ProtocolMap, 'bar'> = async (message) => {
+ *   // message.data 的类型是 number
+ *   console.log(message.data); // 打印消息数据
+ *   // 返回类型是 Promise<boolean>
+ *   return message.data > 0;
+ * };
+ *
+ */
+export type OnMessageCallback<Protocol extends Record<string, any> = Record<string, any>, ID extends keyof Protocol = never> = (
+  message: Message<ParamType<Protocol[ID]>>,
+) => Promisable<ReturnType<Protocol[ID]>>
 
 export interface InternalPacket {
   origin: Endpoint

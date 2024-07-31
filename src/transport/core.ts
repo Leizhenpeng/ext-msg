@@ -1,12 +1,12 @@
 import type { Browser } from 'webextension-polyfill'
 import type {
   Destination,
-  GetMessageProtocolDataType,
-  GetMessageProtocolReturnType,
+  Message,
   OnMessageCallback,
-  PegasusMessage,
+  ParamType,
   Promisify,
   RemoveListenerCallback,
+  ReturnType,
 } from '../types'
 
 export interface TransportBrowserAPI {
@@ -19,9 +19,9 @@ export interface TransportMessagingAPI<
 
   send: <TType extends keyof TProtocolMap>(
     messageID: TType,
-    data: GetMessageProtocolDataType<TProtocolMap[TType]>,
+    data: ParamType<TProtocolMap[TType]>,
     destination?: Destination,
-  ) => Promisify<GetMessageProtocolReturnType<TProtocolMap[TType]>>
+  ) => Promisify<ReturnType<TProtocolMap[TType]>>
 
   on: <TType extends keyof TProtocolMap>(
     messageID: TType,
@@ -41,7 +41,7 @@ export interface TransportBroadcastEventAPI<
 
   receive: <TType extends keyof TProtocolMap>(
     eventID: TType,
-    callback: (event: PegasusMessage<TProtocolMap[TType]>) => void,
+    callback: (event: Message<TProtocolMap[TType]>) => void,
   ) => () => void
 
 }
