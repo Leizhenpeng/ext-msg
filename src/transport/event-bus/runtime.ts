@@ -1,9 +1,8 @@
-import { json } from 'node:stream/consumers'
 import type { JsonValue } from 'type-fest'
 import { serializeError } from 'serialize-error'
 import uuid from 'tiny-uid'
-import type { InternalBroadcastEvent, PegasusMessage, RuntimeContext } from '../types'
-import type { TransportBroadcastEventAPI } from '../transport/core'
+import type { InternalBroadcastEvent, PegasusMessage, RuntimeContext } from '../../types'
+import type { TransportBroadcastEventAPI } from '../core'
 
 export interface BroadcastEventRuntime extends TransportBroadcastEventAPI {
   handleEvent: (message: InternalBroadcastEvent) => void
@@ -24,7 +23,7 @@ class BroadcastEventRuntimeImpl implements BroadcastEventRuntime {
     this.localEvent = localEvent
   }
 
-  public emitBroadcastEvent = async <Data extends JsonValue>(eventID: string, data: Data): Promise<void> => {
+  public emit = async <Data extends JsonValue>(eventID: string, data: Data): Promise<void> => {
     const payload: InternalBroadcastEvent = {
       data,
       hops: [],
@@ -42,26 +41,26 @@ class BroadcastEventRuntimeImpl implements BroadcastEventRuntime {
     await this.handleEvent(payload)
   }
 
-  public handleEvent = async (event: InternalBroadcastEvent): Promise<void> => {
+  public handleEvent = async (message: InternalBroadcastEvent): Promise<void> => {
     // console.log('context input', this.thisContext, this.runtimeId)
-    // console.log(JSON.stringify(event))
+    // console.log(JSON.stringify(receive))
 
-    const isRelayedViaBackground = event.hops.some(hop => hop.startsWith('background::'))
-    const isBackgroundEvent = this.thisContext === 'background' && event.origin.context === this.thisContext
+    const isRelayedViaBackground = message.hops.some(hop => hop.startsWith('background::'))
+    const isBackgroundEvent = this.thisContext === 'background' && message.origin.context === this.thisContext
 
     if (isBackgroundEvent || isRelayedViaBackground) {
-      this.localEvent?.(event)
-      await this.processEvent(event)
+      this.localEvent?.(message)
+      await this.processEvent(message)
 
       if (isRelayedViaBackground)
         return
     }
 
-    event.hops.push(`${this.thisContext}::${this.runtimeId}`)
+    message.hops.push(`${this.thisContext}::${this.runtimeId}`)
     // console.log('context output', this.thisContext, this.runtimeId)
-    // console.log(JSON.stringify(event))
+    // console.log(JSON.stringify(receive))
 
-    await this.routeEvent(event)
+    await this.routeEvent(message)
   }
 
   private processEvent = async (event: InternalBroadcastEvent): Promise<void> => {
@@ -92,7 +91,7 @@ class BroadcastEventRuntimeImpl implements BroadcastEventRuntime {
     }
   }
 
-  public onBroadcastEvent = (eventID: string, callback: (event: PegasusMessage<JsonValue>) => void): () => void => {
+  public receive = (eventID: string, callback: (event: PegasusMessage<JsonValue>) => void): () => void => {
     const currentListeners = this.onEventListeners.get(eventID) ?? []
     this.onEventListeners.set(eventID, [...currentListeners, callback])
 
@@ -106,10 +105,6 @@ class BroadcastEventRuntimeImpl implements BroadcastEventRuntime {
     const updatedListeners = (this.onEventListeners.get(eventID) ?? []).filter(listener => listener !== callback)
     this.onEventListeners.set(eventID, updatedListeners)
   }
-
-  public on = this.onBroadcastEvent
-
-  public emit = this.emitBroadcastEvent
 
   public off = this.offBoardcastEvent
 }

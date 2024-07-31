@@ -1,7 +1,7 @@
-import { createMessageRuntime } from '../message-bus/runtime'
-import { createBroadcastEventRuntime } from '../event-bus/runtime'
 import { usePostMessaging } from '../post-message'
 import { isInternalBroadcastEvent, isInternalMessage } from '../utils/internal-packet-type-guards'
+import { createMessageRuntime } from './message-bus/runtime'
+import { createBroadcastEventRuntime } from './event-bus/runtime'
 import { initTransportAPI } from './core'
 
 interface Props {
@@ -17,7 +17,6 @@ export function init_win_transport({ namespace }: Props = {}): void {
     win.postMessage(event))
 
   win.onMessage((msg) => {
-    // console.log('msg', msg)
     if ('type' in msg && 'transactionID' in msg)
       messageRuntime.endTransaction(msg.transactionID)
 
@@ -38,9 +37,9 @@ export function init_win_transport({ namespace }: Props = {}): void {
 
   initTransportAPI({
     browser: null,
-    emitBroadcastEvent: eventRuntime.emitBroadcastEvent,
-    onBroadcastEvent: eventRuntime.onBroadcastEvent,
-    onMessage: messageRuntime.onMessage,
-    sendMessage: messageRuntime.sendMessage,
+    emit: eventRuntime.emit,
+    receive: eventRuntime.receive,
+    on: messageRuntime.on,
+    send: messageRuntime.send,
   })
 }

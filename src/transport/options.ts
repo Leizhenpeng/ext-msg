@@ -1,8 +1,8 @@
 import browser from 'webextension-polyfill'
 import { createPersistentPort } from '../port-message'
-import { createMessageRuntime } from '../message-bus/runtime'
 import { internalPacketTypeRouter } from '../utils/internal-packet-type-router'
-import { createBroadcastEventRuntime } from '../event-bus/runtime'
+import { createMessageRuntime } from './message-bus/runtime'
+import { createBroadcastEventRuntime } from './event-bus/runtime'
 import { initTransportAPI } from './core'
 
 export function init_opt_transport(): void {
@@ -21,9 +21,9 @@ export function init_opt_transport(): void {
 
   initTransportAPI({
     browser,
-    emitBroadcastEvent: eventRuntime.emitBroadcastEvent,
-    onBroadcastEvent: eventRuntime.onBroadcastEvent,
-    onMessage: messageRuntime.onMessage,
-    sendMessage: messageRuntime.sendMessage,
+    emit: eventRuntime.emit,
+    receive: eventRuntime.receive,
+    on: messageRuntime.on,
+    send: messageRuntime.send,
   })
 }

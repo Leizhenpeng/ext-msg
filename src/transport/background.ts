@@ -7,11 +7,11 @@ import { createDeliveryLogger } from '../utils/delivery-logger'
 import type { InternalBroadcastEvent, InternalPacket } from '../types'
 import type { RequestMessage } from '../port-message'
 import { PortMessage } from '../port-message'
-import { createMessageRuntime } from '../message-bus/runtime'
 import { deserializeEndpoint, serializeEndpoint } from '../utils/endpoint-utils'
 import { decodeConnectionArgs } from '../utils/connection-args'
 import { internalPacketTypeRouter } from '../utils/internal-packet-type-router'
-import { createBroadcastEventRuntime } from '../event-bus/runtime'
+import { createMessageRuntime } from './message-bus/runtime'
+import { createBroadcastEventRuntime } from './event-bus/runtime'
 import { initTransportAPI } from './core'
 
 interface PortConnection {
@@ -353,7 +353,7 @@ export function init_bg_transport(): void {
 
   const routeEvent = async (event: InternalBroadcastEvent) => {
     // Background SW just resumed it's work and there are no connections yet
-    // so we need to queue the event for later delivery
+    // so we need to queue the receive for later delivery
     if (connMap.size === 0 && undeliveredEvents !== undefined) {
       undeliveredEvents.push(event)
       return
@@ -374,9 +374,9 @@ export function init_bg_transport(): void {
 
   initTransportAPI({
     browser,
-    emitBroadcastEvent: eventRuntime.emitBroadcastEvent,
-    onBroadcastEvent: eventRuntime.onBroadcastEvent,
-    onMessage: messageRuntime.onMessage,
-    sendMessage: messageRuntime.sendMessage,
+    emit: eventRuntime.emit,
+    receive: eventRuntime.receive,
+    on: messageRuntime.on,
+    send: messageRuntime.send,
   })
 }

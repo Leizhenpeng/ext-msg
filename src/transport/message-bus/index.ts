@@ -1,5 +1,5 @@
-import type { TransportMessagingAPI } from '../transport/core'
-import { getTransportAPI } from '../transport/core'
+import type { TransportMessagingAPI } from '../core'
+import { getTransportAPI } from '../core'
 
 declare const MissingProtocolMap: unique symbol
 
@@ -11,7 +11,6 @@ type MessageBusReturnType<TProtocolMap extends Record<string, any>> =
 export function createMessageBus<
   TProtocolMap extends Record<string, any> = never,
   >(): MessageBusReturnType<TProtocolMap> {
-  const { onMessage, sendMessage } = getTransportAPI()
-
-  return { onMessage, sendMessage } as MessageBusReturnType<TProtocolMap>
+  const { on, send } = getTransportAPI()
+  return { on, send } as MessageBusReturnType<TProtocolMap>
 }

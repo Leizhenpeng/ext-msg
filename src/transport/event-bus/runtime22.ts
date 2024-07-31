@@ -1,11 +1,10 @@
-import { json } from 'node:stream/consumers'
 import type { JsonValue } from 'type-fest'
 
 import { serializeError } from 'serialize-error'
 import uuid from 'tiny-uid'
 import { i } from 'vitest/dist/reporters-yx5ZTtEV.js'
-import type { InternalBroadcastEvent, PegasusMessage, RuntimeContext } from '../types'
-import type { TransportBroadcastEventAPI } from '../transport/core'
+import type { InternalBroadcastEvent, PegasusMessage, RuntimeContext } from '../../types'
+import type { TransportBroadcastEventAPI } from '../core'
 
 // us - cs- bg -cs -us1/2/3
 export interface BroadcastEventRuntime extends TransportBroadcastEventAPI {
@@ -22,14 +21,14 @@ export function createBroadcastEventRuntime(thisContext: RuntimeContext, routeEv
         Array<(event: PegasusMessage<JsonValue>) => void | Promise<void>>
     >()
 
-  // 一会 data 一会 event
+  // 一会 data 一会 receive
   const handleEvent = async (event: InternalBroadcastEvent): Promise<void> => {
     console.log('context input ', thisContext, runtimeId)
     console.log(JSON.stringify(event))
     // 过了 bg 没有
     const relayedViaBackground
             = event.hops.findIndex(hop => hop.startsWith(`background::`)) !== -1
-    // If event was sent from background or it's already a relay from background
+    // If receive was sent from background or it's already a relay from background
     // All broadcast events are relayed through background
     // 或判断有点绕，分开说明意图更清晰
     if (
@@ -67,7 +66,7 @@ export function createBroadcastEventRuntime(thisContext: RuntimeContext, routeEv
         )
       }
 
-      // If event was sent from background and not relayed,
+      // If receive was sent from background and not relayed,
       // we still need to route it to other contexts
       // 到了 us 之后，bg 标记过，自己没有 local 的，就不会传播了
       if (relayedViaBackground)
@@ -103,7 +102,7 @@ export function createBroadcastEventRuntime(thisContext: RuntimeContext, routeEv
       return await handleEvent(payload)
     },
     handleEvent,
-    on: (eventID, callback) => {
+    receive: (eventID, callback) => {
       const currentListeners = onEventListeners.get(eventID) ?? []
       onEventListeners.set(eventID, [
         ...currentListeners,

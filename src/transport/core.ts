@@ -17,31 +17,33 @@ export interface TransportMessagingAPI<
   TProtocolMap extends Record<string, any> = Record<string, any>,
 > {
 
-  sendMessage: <TType extends keyof TProtocolMap>(
+  send: <TType extends keyof TProtocolMap>(
     messageID: TType,
     data: GetMessageProtocolDataType<TProtocolMap[TType]>,
     destination?: Destination,
   ) => Promisify<GetMessageProtocolReturnType<TProtocolMap[TType]>>
 
-  onMessage: <TType extends keyof TProtocolMap>(
+  on: <TType extends keyof TProtocolMap>(
     messageID: TType,
     callback: OnMessageCallback<TProtocolMap, TType>,
   ) => RemoveListenerCallback
+
 }
 
 export interface TransportBroadcastEventAPI<
   TProtocolMap extends Record<string, any> = Record<string, any>,
 > {
 
-  onBroadcastEvent: <TType extends keyof TProtocolMap>(
+  emit: <TType extends keyof TProtocolMap>(
+    eventID: TType,
+    data: TProtocolMap[TType],
+  ) => Promise<void>
+
+  receive: <TType extends keyof TProtocolMap>(
     eventID: TType,
     callback: (event: PegasusMessage<TProtocolMap[TType]>) => void,
   ) => () => void
 
-  emitBroadcastEvent: <TType extends keyof TProtocolMap>(
-    eventID: TType,
-    data: TProtocolMap[TType],
-  ) => Promise<void>
 }
 
 export interface TransportAPI extends

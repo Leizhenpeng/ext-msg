@@ -1,5 +1,5 @@
-import type { BroadcastEventRuntime } from '../event-bus/runtime'
-import type { MessageRuntime } from '../message-bus/runtime'
+import type { BroadcastEventRuntime } from '../transport/event-bus/runtime'
+import type { MessageRuntime } from '../transport/message-bus/runtime'
 import type { InternalPacket } from '../types'
 import { isInternalBroadcastEvent, isInternalMessage } from './internal-packet-type-guards'
 

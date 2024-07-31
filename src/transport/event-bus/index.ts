@@ -1,5 +1,5 @@
-import type { TransportBroadcastEventAPI } from '../transport/core'
-import { getTransportAPI } from '../transport/core'
+import type { TransportBroadcastEventAPI } from '../core'
+import { getTransportAPI } from '../core'
 
 declare const MissingProtocolMap: unique symbol
 type MissingProtocolMapType = typeof MissingProtocolMap
@@ -13,6 +13,6 @@ type PegasusMessagingReturnType<TProtocolMap extends Record<string, any>> = [
 export function createEventBus<
     TProtocolMap extends Record<string, any> = never,
   >(): PegasusMessagingReturnType<TProtocolMap> {
-  const { onBroadcastEvent, emitBroadcastEvent } = getTransportAPI()
-  return { emitBroadcastEvent, onBroadcastEvent } as PegasusMessagingReturnType<TProtocolMap>
+  const { receive, emit } = getTransportAPI()
+  return { emit, receive } as PegasusMessagingReturnType<TProtocolMap>
 }

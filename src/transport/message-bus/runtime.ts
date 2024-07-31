@@ -2,9 +2,9 @@
 import type { JsonValue } from 'type-fest'
 import { serializeError } from 'serialize-error'
 import uuid from 'tiny-uid'
-import type { InternalMessage, OnMessageCallback, RuntimeContext } from '../types'
-import { deserializeEndpoint } from '../utils/endpoint-utils'
-import type { TransportMessagingAPI } from '../transport/core'
+import type { InternalMessage, OnMessageCallback, RuntimeContext } from '../../types'
+import { deserializeEndpoint } from '../../utils/endpoint-utils'
+import type { TransportMessagingAPI } from '../core'
 
 export interface MessageRuntime extends TransportMessagingAPI {
   handleMessage: (message: InternalMessage) => void
@@ -141,15 +141,15 @@ class MessageRuntimeClass implements MessageRuntime {
   }
 
   // 注册消息处理回调
-  public onMessage = (messageID: string, callback: OnMessageCallback) => {
+  public on = (messageID: string, callback: OnMessageCallback) => {
     this.onMessageListeners.set(messageID, callback)
     return () => this.onMessageListeners.delete(messageID)
   }
 
   // 发送消息
-  public sendMessage = (messageID: string, data: any, destination: string | InternalMessage['destination'] = 'background') => {
+  public send = (messageID: string, data: any, destination: string | InternalMessage['destination'] = 'background') => {
     const endpoint = typeof destination === 'string' ? deserializeEndpoint(destination) : destination
-    const errFn = 'Bridge#sendMessage ->'
+    const errFn = 'Bridge#sendMsg ->'
 
     if (!endpoint.context)
       throw new TypeError(`${errFn} Destination must be any one of known destinations`)

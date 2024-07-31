@@ -2,13 +2,13 @@ import type { JsonValue } from 'type-fest'
 
 import { serializeError } from 'serialize-error'
 import uuid from 'tiny-uid'
-import type { InternalMessage, TransportMessagingAPI } from '../types-internal'
-import type { OnMessageCallback, RuntimeContext } from '../types'
-import { deserializeEndpoint } from '../utils/endpoint-utils'
+import type { InternalMessage, OnMessageCallback, RuntimeContext } from '../../types'
+import { deserializeEndpoint } from '../../utils/endpoint-utils'
+import type { TransportMessagingAPI } from '../core'
 
 // 创建消息运行时(createMessageRuntime)：这个函数创建并返回一个消息运行时对象，它有一些方法可以处理消息传递和接收。
 
-// 发送消息(sendMessage)：这个方法让你可以发送消息到指定的目的地（比如后台脚本或者其他标签页）。你只需要提供消息ID、消息数据和目的地。
+// 发送消息(sendMsg)：这个方法让你可以发送消息到指定的目的地（比如后台脚本或者其他标签页）。你只需要提供消息ID、消息数据和目的地。
 
 // 处理消息(handleMessage)：这个方法是消息的核心处理器。它决定如何处理收到的消息，有两种情况：
 
@@ -148,17 +148,17 @@ export function createMessageRuntime(thisContext: RuntimeContext, routeMessage: 
       openTransactions.delete(transactionID)
     },
     handleMessage,
-    onMessage: (messageID, callback) => {
+    on: (messageID, callback) => {
       onMessageListeners.set(messageID, callback)
 
       return () => onMessageListeners.delete(messageID)
     },
-    sendMessage: (messageID, data, destination = 'background') => {
+    send: (messageID, data, destination = 'background') => {
       const endpoint
                 = typeof destination === 'string'
                   ? deserializeEndpoint(destination)
                   : destination
-      const errFn = 'Bridge#sendMessage ->'
+      const errFn = 'Bridge#sendMsg ->'
 
       if (!endpoint.context)
         throw new TypeError(`${errFn} Destination must be any one of known destinations`)

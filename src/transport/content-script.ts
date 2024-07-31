@@ -1,9 +1,9 @@
 import browser from 'webextension-polyfill'
-import { createMessageRuntime } from '../message-bus/runtime'
 import { createPersistentPort } from '../port-message'
 import { usePostMessaging } from '../post-message'
-import { createBroadcastEventRuntime } from '../event-bus/runtime'
 import { internalPacketTypeRouter } from '../utils/internal-packet-type-router'
+import { createBroadcastEventRuntime } from './event-bus/runtime'
+import { createMessageRuntime } from './message-bus/runtime'
 import { initTransportAPI } from './core'
 
 interface Props {
@@ -49,7 +49,7 @@ export function init_cs_transport({
     else {
       const payload = Object.assign({}, message, {
         origin: {
-          // a message event inside `content-script` means a script inside `window` dispatched it to be forwarded
+          // a message receive inside `content-script` means a script inside `window` dispatched it to be forwarded
           // so we're making sure that the origin is not tampered (i.e script is not masquerading it's true identity)
           context: 'window',
           tabId: null,
@@ -84,9 +84,9 @@ export function init_cs_transport({
 
   initTransportAPI({
     browser,
-    emitBroadcastEvent: eventRuntime.emitBroadcastEvent,
-    onBroadcastEvent: eventRuntime.onBroadcastEvent,
-    onMessage: messageRuntime.onMessage,
-    sendMessage: messageRuntime.sendMessage,
+    emit: eventRuntime.emit,
+    receive: eventRuntime.receive,
+    on: messageRuntime.on,
+    send: messageRuntime.send,
   })
 }
