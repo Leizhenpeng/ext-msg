@@ -29,8 +29,8 @@ export interface Packet {
 
 export interface SocketLayer {
   routeMessage: (packet: Packet) => void
+  getOrigin: () => RuntimeContext
   // receiveMessage: (packet: Packet) => void
-  // getOrigin: () => RuntimeContext
   // routeMessageIfNeeded: (packet: Packet) => void
   // initialize: () => void
 }

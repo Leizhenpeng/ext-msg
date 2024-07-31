@@ -7,6 +7,14 @@ export abstract class SocketRuntime<Protocol extends Record<string, any>> implem
   protected handlers: Map<string, MsgHandler<Protocol, any>> = new Map()
   protected openTransactions: Map<string, { resolve: (value: any) => void, reject: (reason?: any) => void }> = new Map()
   protected runtimeId = this.generateUUName()
+  static instance: SocketRuntime<any>
+
+  static getInstance<Protocol extends Record<string, any>>(): SocketRuntime<Protocol> {
+    if (!SocketRuntime.instance)
+      SocketRuntime.instance = new (this as any)()
+
+    return SocketRuntime.instance as SocketRuntime<Protocol>
+  }
 
   constructor() { }
 
@@ -170,6 +178,29 @@ export abstract class SocketRuntime<Protocol extends Record<string, any>> implem
   }
 
   abstract routeMessage(packet: Packet): void
-  protected abstract receiveMessage(packet: Packet): void
-  protected abstract getOrigin(): RuntimeContext
+  // abstract receiveMessage(packet: Packet): void
+  abstract getOrigin(): RuntimeContext
+}
+
+declare const MissingProtocolMap: unique symbol
+
+type MissingProtocolMapType = typeof MissingProtocolMap
+
+type MessageBusReturnType<TProtocolMap extends Record<string, any>> =
+  [TProtocolMap] extends [never] ? MissingProtocolMapType : Socket<TProtocolMap>
+
+// export function createSocket<
+//   TProtocolMap extends Record<string, any> = never,
+// >(): MessageBusReturnType<TProtocolMap> {
+//   const { on, send } = SocketRuntime.getInstance()
+//   return { on, send } as unknown as MessageBusReturnType<TProtocolMap>
+// }
+
+export function createSocket<
+  TProtocolMap extends Record<string, any> = never,
+  T extends SocketRuntime<TProtocolMap> = SocketRuntime<TProtocolMap>,
+>(SocketClass: new () => T): MessageBusReturnType<TProtocolMap> {
+  const instance = (SocketClass as unknown as typeof SocketRuntime).getInstance<TProtocolMap>()
+  const { on, send } = instance
+  return { on, send } as unknown as MessageBusReturnType<TProtocolMap>
 }

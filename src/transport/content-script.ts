@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill'
 import { createPersistentPort } from '../message-tool/extenison-port-message'
-import { usePostMessaging } from '../message-tool/brower-channel-message'
+import { usePostMessaging } from '../message-tool/browser-channel-message'
 import { internalPacketTypeRouter } from '../utils/internal-packet-type-router'
 import { createBroadcastEventRuntime } from './event-bus/runtime'
 import { createMessageRuntime } from './message-bus/runtime'

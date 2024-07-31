@@ -1,4 +1,4 @@
-import { usePostMessaging } from '../message-tool/brower-channel-message'
+import { usePostMessaging } from '../message-tool/browser-channel-message'
 import { isInternalBroadcastEvent, isInternalMessage } from '../utils/internal-packet-type-guards'
 import { createMessageRuntime } from './message-bus/runtime'
 import { createBroadcastEventRuntime } from './event-bus/runtime'
