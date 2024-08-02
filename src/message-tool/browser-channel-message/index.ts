@@ -1,4 +1,3 @@
-import type { Packet } from '../../protocol/socket-protocol/interface'
 import type { EndpointWontRespondError, InternalPacket } from '../../types'
 import { getMessagePort, getMessagePorts } from './message-port'
 
@@ -11,7 +10,7 @@ import { getMessagePort, getMessagePorts } from './message-port'
 export function usePostMessaging(thisContext: 'window' | 'content-script') {
   let allocatedNamespace: string
   let messagingEnabled = false
-  let onMessageCallback: (msg: InternalPacket | EndpointWontRespondError | Packet) => void
+  let onMessageCallback: (msg: InternalPacket | EndpointWontRespondError) => void
   let portP: Promise<MessagePort[] | MessagePort>
 
   return {
@@ -46,7 +45,7 @@ export function usePostMessaging(thisContext: 'window' | 'content-script') {
    * @param msg 消息对象
    * @throws 如果上下文无效或通信未启用，抛出错误
    */
-  async function postMessage(msg: InternalPacket | EndpointWontRespondError | Packet) {
+  async function postMessage(msg: InternalPacket | EndpointWontRespondError) {
     validateContext()
     ensureMessagingEnabled()
     ensureNamespaceSet(allocatedNamespace)

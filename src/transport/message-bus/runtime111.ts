@@ -99,7 +99,7 @@ export function createMessageRuntime(thisContext: RuntimeContext, routeMessage: 
               return routeMessage(message)
             }
             noHandlerFoundError = true
-            throw new Error(`[ext-message] No handler registered in '${thisContext}' to accept messages with id '${messageID}'`)
+            throw new Error(`[ext-msg] No handler registered in '${thisContext}' to accept messages with id '${messageID}'`)
           }
         }
         catch (error) {

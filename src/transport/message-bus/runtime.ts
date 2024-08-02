@@ -71,7 +71,7 @@ class MessageRuntimeClass implements MessageRuntime {
       else {
         this.firstRoute(message)
         noHandlerFoundError = true
-        throw new Error(`[ext-message] No handler registered in '${this.thisContext}' to accept messages with id '${message.id}'`)
+        throw new Error(`[ext-msg] No handler registered in '${this.thisContext}' to accept messages with id '${message.id}'`)
       }
     }
     catch (error) {
