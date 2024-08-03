@@ -53,6 +53,7 @@
     "dist"
   ],
   "scripts": {
+    "open": "npx npm-open --npm",
     "build": "tsup",
     "dev": "tsup --watch",
     "lint": "eslint .",
