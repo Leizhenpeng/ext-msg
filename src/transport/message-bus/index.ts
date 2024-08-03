@@ -14,3 +14,5 @@ export function createMessageBus<
   const { on, send } = getTransportAPI()
   return { on, send } as MessageBusReturnType<TProtocolMap>
 }
+
+export const Socket = createMessageBus

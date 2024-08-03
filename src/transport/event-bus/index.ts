@@ -16,3 +16,5 @@ export function createEventBus<
   const { receive, emit } = getTransportAPI()
   return { emit, receive } as PegasusMessagingReturnType<TProtocolMap>
 }
+
+export const EventBus = createEventBus

@@ -44,6 +44,7 @@ function createMessagePortPromise(thisContext: 'window' | 'content-script', name
 
     function acceptMessagingPort(event: MessageEvent) {
       const { data: { cmd, scope, context }, ports } = event
+      console.log('acceptMessagingPort', event)
       if (cmd === 'webext-port-offer' && scope === namespace && context !== thisContext) {
         window.removeEventListener('message', acceptMessagingPort)
         ports[0].onmessage = onMessage

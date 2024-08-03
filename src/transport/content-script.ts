@@ -7,11 +7,11 @@ import { createMessageRuntime } from './message-bus/runtime'
 import { initTransportAPI } from './core'
 
 interface Props {
-  allowWindowMessagingForNamespace?: string
+  namespace?: string
 }
 
 export function init_cs_transport({
-  allowWindowMessagingForNamespace,
+  namespace,
 }: Props = {}): void {
   const win = usePostMessaging('content-script')
   const port = createPersistentPort()
@@ -77,8 +77,8 @@ export function init_cs_transport({
     messageRuntime.endTransaction(message.transactionId)
   })
 
-  if (allowWindowMessagingForNamespace) {
-    win.setNamespace(allowWindowMessagingForNamespace)
+  if (namespace) {
+    win.setNamespace(namespace)
     win.enable()
   }
 

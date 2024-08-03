@@ -72,6 +72,7 @@ export function usePostMessaging(thisContext: 'window' | 'content-script') {
       portP = getMessagePorts(thisContext, nsps, (event: any) => {
         onMessageCallback?.(event.data)
       })
+      console.log('portP', portP)
     }
     else {
       portP = getMessagePort(thisContext, nsps, (event) => {
