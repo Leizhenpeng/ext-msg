@@ -28,7 +28,18 @@ export function usePostMessaging(thisContext: 'window' | 'content-script') {
     postMessage,
     setNamespace,
     getPort,
+    isConnected,
   }
+
+  /**
+   * 判断是否已经建立连接
+   *
+   * @returns 返回一个布尔值，表示是否至少有一个端口已连接
+   */
+  function isConnected() {
+    return ports.length > 0
+  }
+
   function getPort() {
     return portP
   }
@@ -55,6 +66,7 @@ export function usePostMessaging(thisContext: 'window' | 'content-script') {
    * @throws 如果上下文无效或通信未启用，抛出错误
    */
   async function postMessage(msg: InternalPacket | EndpointWontRespondError) {
+    await waitForConnection() // 等待至少有一个端口连接
     validateContext()
     ensureMessagingEnabled()
     ensureNamespaceSet(allocatedNamespace)
@@ -114,5 +126,18 @@ export function usePostMessaging(thisContext: 'window' | 'content-script') {
   function ensureNamespaceSet(namespace: string) {
     if (typeof namespace !== 'string' || namespace.trim().length === 0)
       throw new Error('Namespace must be a non-empty string.')
+  }
+
+  async function waitForConnection() {
+    if (!isConnected()) {
+      await new Promise((resolve) => {
+        const checkConnection = setInterval(() => {
+          if (isConnected()) {
+            clearInterval(checkConnection)
+            resolve(true)
+          }
+        }, 100) // 每100毫秒检查一次连接状态
+      })
+    }
   }
 }
