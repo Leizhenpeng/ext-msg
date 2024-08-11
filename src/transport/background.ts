@@ -378,5 +378,6 @@ export function init_bg_transport(): void {
     receive: eventRuntime.receive,
     on: messageRuntime.on,
     send: messageRuntime.send,
+    off: messageRuntime.off,
   })
 }

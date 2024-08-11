@@ -11,8 +11,8 @@ type MessageBusReturnType<TProtocolMap extends Record<string, any>> =
 export function createMessageBus<
   TProtocolMap extends Record<string, any> = never,
   >(): MessageBusReturnType<TProtocolMap> {
-  const { on, send } = getTransportAPI()
-  return { on, send } as MessageBusReturnType<TProtocolMap>
+  const { on, send, off } = getTransportAPI()
+  return { on, send, off } as MessageBusReturnType<TProtocolMap>
 }
 
-export const Socket = createMessageBus
+export const io = createMessageBus

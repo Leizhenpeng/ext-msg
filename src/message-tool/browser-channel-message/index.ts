@@ -1,5 +1,5 @@
 import type { EndpointWontRespondError, InternalPacket } from '../../types'
-import { getMessagePort, getMessagePorts } from './message-port'
+import { getMessagePort, getMessagePorts, portEmitter } from './message-port'
 
 /**
  * 用于在 content-script 和 window 上下文之间的通信
@@ -12,6 +12,15 @@ export function usePostMessaging(thisContext: 'window' | 'content-script') {
   let messagingEnabled = false
   let onMessageCallback: (msg: InternalPacket | EndpointWontRespondError) => void
   let portP: Promise<MessagePort[] | MessagePort>
+  const ports: MessagePort[] = []
+
+  portEmitter.on('portAccepted', (port) => {
+    console.log('Port accepted:', port)
+    if (onMessageCallback)
+      port.onmessage = event => onMessageCallback(event.data as InternalPacket)
+
+    ports.push(port)
+  })
 
   return {
     enable,
@@ -49,33 +58,28 @@ export function usePostMessaging(thisContext: 'window' | 'content-script') {
     validateContext()
     ensureMessagingEnabled()
     ensureNamespaceSet(allocatedNamespace)
-    const ports = await portP
-    if (Array.isArray(ports))
-      ports.forEach(port => port.postMessage(msg))
-    else
-      ports.postMessage(msg)
+    ports.forEach(port => port.postMessage(msg))
   }
 
   /**
    * 设置命名空间并初始化消息端口
    *
-   * @param nsps 命名空间
+   * @param nsp 命名空间
    * @throws 如果命名空间已设置，抛出错误
    */
-  function setNamespace(nsps: string) {
+  function setNamespace(nsp: string) {
     if (allocatedNamespace)
       throw new Error('Namespace once set cannot be changed')
 
-    allocatedNamespace = nsps
+    allocatedNamespace = nsp
 
     if (thisContext === 'content-script') {
-      portP = getMessagePorts(thisContext, nsps, (event: any) => {
+      getMessagePorts(thisContext, nsp, (event: any) => {
         onMessageCallback?.(event.data)
       })
-      console.log('portP', portP)
     }
     else {
-      portP = getMessagePort(thisContext, nsps, (event) => {
+      getMessagePort(thisContext, nsp, (event) => {
         onMessageCallback?.(event.data)
       })
     }

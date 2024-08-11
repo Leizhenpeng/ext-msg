@@ -28,6 +28,9 @@ export interface TransportMessagingAPI<
     callback: OnMessageCallback<TProtocolMap, TType>,
   ) => RemoveListenerCallback
 
+  off: <TType extends keyof TProtocolMap>(
+    messageID: TType,
+  ) => void
 }
 
 export interface TransportBroadcastEventAPI<

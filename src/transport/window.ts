@@ -41,5 +41,6 @@ export function init_win_transport({ namespace }: Props = {}): void {
     receive: eventRuntime.receive,
     on: messageRuntime.on,
     send: messageRuntime.send,
+    off: messageRuntime.off,
   })
 }

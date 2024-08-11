@@ -25,5 +25,6 @@ export function init_popup_transport(): void {
     receive: eventRuntime.receive,
     on: messageRuntime.on,
     send: messageRuntime.send,
+    off: messageRuntime.off,
   })
 }

@@ -29,5 +29,6 @@ export function init_dev_transport(): void {
     receive: eventRuntime.receive,
     on: messageRuntime.on,
     send: messageRuntime.send,
+    off: messageRuntime.off,
   })
 }

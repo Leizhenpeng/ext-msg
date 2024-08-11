@@ -14,6 +14,7 @@ export function init_cs_transport({
   namespace,
 }: Props = {}): void {
   const win = usePostMessaging('content-script')
+  console.log('content win init ', win)
   const port = createPersistentPort()
   const messageRuntime = createMessageRuntime(
     'content-script',
@@ -42,6 +43,8 @@ export function init_cs_transport({
   )
 
   win.onMessage((message) => {
+    console.log('message', message)
+
     if ('type' in message && 'transactionID' in message) {
       // msg is instance of EndpointWontRespondError
       messageRuntime.endTransaction(message.transactionID)
@@ -78,6 +81,7 @@ export function init_cs_transport({
   })
 
   if (namespace) {
+    console.log('namespace', namespace)
     win.setNamespace(namespace)
     win.enable()
   }
@@ -88,5 +92,6 @@ export function init_cs_transport({
     receive: eventRuntime.receive,
     on: messageRuntime.on,
     send: messageRuntime.send,
+    off: messageRuntime.off,
   })
 }

@@ -116,6 +116,7 @@ class MessageRuntimeClass implements MessageRuntime {
   public handleMessage = (message: InternalMessage) => {
     console.log('context', this.thisContext)
     console.log('message', JSON.stringify(message, null, 2))
+    console.log('onMessageListeners', this.onMessageListeners)
     if (message.destination.context === this.thisContext && !message.destination.frameId && !message.destination.tabId) {
       this.localMessage?.(message)
 
@@ -145,9 +146,12 @@ class MessageRuntimeClass implements MessageRuntime {
 
   // 注册消息处理回调
   public on = (messageID: string, callback: OnMessageCallback) => {
+    // console.log('on', messageID, callback)
     this.onMessageListeners.set(messageID, callback)
     return () => this.onMessageListeners.delete(messageID)
   }
+
+  public off = (messageID: string) => this.onMessageListeners.delete(messageID)
 
   // 发送消息
   public send = (messageID: string, data: any, destination: string | InternalMessage['destination'] = 'background') => {
