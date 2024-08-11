@@ -1,7 +1,7 @@
 {
   "name": "ext-msg",
   "type": "module",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "packageManager": "pnpm@9.1.1",
   "description": "🔗 Simplified, type-safe wrapper for web extension messaging, ensuring seamless communication across different contexts.",
   "author": "leizhenpeng <laolei@forkway.cn>",
