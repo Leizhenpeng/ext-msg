@@ -15,7 +15,7 @@ export function usePostMessaging(thisContext: 'window' | 'content-script') {
   const ports: MessagePort[] = []
 
   portEmitter.on('portAccepted', (port) => {
-    console.log('Port accepted:', port)
+    // console.log('Port accepted:', port)
     if (onMessageCallback)
       port.onmessage = event => onMessageCallback(event.data as InternalPacket)
 

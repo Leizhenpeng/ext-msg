@@ -114,9 +114,9 @@ class MessageRuntimeClass implements MessageRuntime {
 
   // 处理接收到的消息
   public handleMessage = (message: InternalMessage) => {
-    console.log('context', this.thisContext)
-    console.log('message', JSON.stringify(message, null, 2))
-    console.log('onMessageListeners', this.onMessageListeners)
+    // console.log('context', this.thisContext)
+    // console.log('message', JSON.stringify(message, null, 2))
+    // console.log('onMessageListeners', this.onMessageListeners)
     if (message.destination.context === this.thisContext && !message.destination.frameId && !message.destination.tabId) {
       this.localMessage?.(message)
 
