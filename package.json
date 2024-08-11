@@ -1,7 +1,7 @@
 {
   "name": "ext-msg",
   "type": "module",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "packageManager": "pnpm@9.1.1",
   "description": "🔗 Simplified, type-safe wrapper for web extension messaging, ensuring seamless communication across different contexts.",
   "author": "leizhenpeng <laolei@forkway.cn>",
@@ -66,6 +66,7 @@
     "prepare": "simple-git-hooks"
   },
   "dependencies": {
+    "nanoevents": "^9.0.0",
     "serialize-error": "^11.0.3",
     "tiny-uid": "^1.1.2",
     "type-fest": "^4.23.0",
